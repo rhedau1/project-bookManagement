@@ -1,0 +1,28 @@
+{
+  "name": "bookmanagement",
+  "version": "1.0.0",
+  "description": "- Create a group database `groupXDatabase`. You can clean the db you previously used and resue that.\r - This time each group should have a *single git branch*. Coordinate amongst yourselves by ensuring every next person pulls the code last pushed by a team mate. You branch will be checked as part of the demo. Branch name should follow the naming convention `project/booksManagementGroupX`\r - Follow the naming conventions exactly as instructed.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junaidmallick/BookManagement.git"
+  },
+  "keywords": [],
+  "author": "junaid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/junaidmallick/BookManagement/issues"
+  },
+  "homepage": "https://github.com/junaidmallick/BookManagement#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.6",
+    "nodemon": "^2.0.15",
+    "validator": "^13.7.0"
+  }
+}
