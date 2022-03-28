@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
     },
 
 
-}, {timestamp : true});
+}, {timestamps: true});
 
 module.exports = mongoose.model('user', userSchema)
 //It probably means that we are making a model inside our mongoose Database which will be named books and would have schema like that of bookSchema you are creating
