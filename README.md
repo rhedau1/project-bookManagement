@@ -93,7 +93,14 @@
 - If the book has no reviews then the response body should include book detail as shown [here](#book-details-response-no-reviews) and an empty array for reviewsData.
 - If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
 
-### PUT /books/:bookId
+
+### DELETE /books/:bookId
+- Check if the bookId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
+- If the book document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
+
+## Review APIs
+### POST /books/:bookId/review
+- Add a review for the### PUT /books/:bookId
 - Update a book by changing its
   - title
   - excerpt
@@ -103,14 +110,7 @@
 - Check if the bookId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure)
 - Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
 - Also make sure in the response you return the updated book document. 
-
-### DELETE /books/:bookId
-- Check if the bookId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
-- If the book document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
-
-## Review APIs
-### POST /books/:bookId/review
-- Add a review for the book in reviews collection.
+ book in reviews collection.
 - Check if the bookId exists and is not deleted before adding the review. Send an error response with appropirate status code like [this](#error-response-structure) if the book does not exist
 - Get review details like review, rating, reviewer's name in request body.
 - Update the related book document by increasing its review count
