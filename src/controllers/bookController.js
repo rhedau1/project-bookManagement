@@ -1,5 +1,6 @@
 const bookModel = require('../models/bookModel')
 const userModel = require('../models/userModel')
+const reviewModel = require('../models/reviewModel')
 const moment = require("moment")
 
 const isValid = function(value) {
@@ -150,6 +151,7 @@ const getBookById = async function (req, res) {
             return res.status(400).send({ status: false, message: 'please provide valid bookId' })
           }
         const findBook = await bookModel.findById({ _id: bookId,  isDeleted: false})
+        console.log(findBook)
 
         if (!findBook) {
           return res.status(404).send({ status: false, message: 'book not found' })
