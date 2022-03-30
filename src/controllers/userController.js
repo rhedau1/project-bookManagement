@@ -162,13 +162,16 @@ const userLogin = async function (req, res) {
         
 
         const token = jwt.sign({
-            junaid: checkEmail._id.toString(),
-            // exp: Math.floor(Date.now()/1000) + 10 * 60 * 60
+            group15: checkEmail._id.toString(),
+            iat: Math.floor(Date.now()/1000),
+            exp: Math.floor(Date.now()/1000) + 10 * 60 * 60
+
+    
         },
-            'junaid',
-            { expiresIn: '10m'}
-            );
+            'group15Project'
+        );
             
+
          return res.status(200).send({status: true, message: 'User login successfull', data: {token}});
     } 
     catch (error) {

@@ -36,7 +36,7 @@ const createReview = async function (req, res) {
             return res.status(400).send({ status: false, message: 'please provide valid bookId' })
         }
 
-        const book = await bookModel.findById(bookId)
+        const book = await bookModel.findOne({_id:bookId,isDeleted:false})
 
         if (!book) {
             return res.status(404).send({ status: false, message: 'book not found' })
@@ -75,5 +75,134 @@ const createReview = async function (req, res) {
     }
 }
 
+
+/*### PUT /books/:bookId/review/:reviewId
+- Update the review - review, rating, reviewer's name.
+- Check if the bookId exists and is not deleted before updating the review. Check if the review exist before updating the review. Send an error response with appropirate status code like [this](#error-response-structure) if the book does not exist
+- Get review details like review, rating, reviewer's name in request body.
+- Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like [this](#book-details-response)
+*/
+const updateReviews = async function (req, res) {
+    try {
+        const bookId = req.params.bookId
+        const reviewId = req.params.reviewId
+        const updatingBody = req.body
+
+       
+        if(Object.keys(updatingBody) == 0) {
+            res.status(400).send({status: false, message: 'please provide data for updation'})
+            return
+        }
+
+        if (!(/^[0-9a-fA-F]{24}$/.test(reviewId))) {
+            res.status(400).send({ status: false, message: 'please provide valid reviewId' })
+            return
+        }
+
+        const book = await bookModel.findOne({ _id: bookId, isDeleted: false })
+
+        if(!book) {
+            return res.status(404).send({status: false, message: 'book doesnot exist'})
+        }
+
+        if (!(/^[0-9a-fA-F]{24}$/.test(reviewId))) {
+            res.status(400).send({ status: false, message: 'please provide valid reviewId' })
+            return
+        }
+        
+        const review = await reviewModel.findOne({ _id: reviewId, bookId: bookId, isDeleted: false })
+        if (!review) {
+            res.status(400).send({ status: false, message: "This review doesn't exist for given bookId" })
+            return
+        }
+
+        if (updatingBody.reviewedBy != null) {
+            if (!isValid(updatingBody.reviewedBy)) {
+                res.status(400).send({ status: false, message: 'please provide reviewedBy' })
+                return
+            }
+        }
+       
+        if (updatingBody.rating != null) {
+            if (!isValid(updatingBody.rating)) {
+                res.status(400).send({ status: false, message: 'please provide rating' })
+                return
+            }
+        }
+        
+        if (updatingBody.review != null) {
+            if (!isValid(updatingBody.review)) {
+                res.status(400).send({ status: false, message: 'please provide review' })
+                return
+            }
+        }
+
+        if (updatingBody.rating < 1 || updatingBody.rating > 5 ) {
+            res.status(400).send({ status: false, message: 'please provide ratings ( 1 - 5 )' })
+            return
+        }
+
+        const updatedReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId },{ updatingBody },{ new: true })
+
+        const allReviews = await reviewModel.find({ bookId: bookId ,isDeleted:false})
+
+        res.status(200).send({status: true,message: "review updateded",data: { ...book.toObject(), viewer: allReviews } })
+        return
+
+    }
+    catch (error) {
+        console.log(error.message)
+        res.status(500).send({ status: false, message: error.message })
+    }
+}
+
+/*### DELETE /books/:bookId/review/:reviewId
+- Check if the review exist with the reviewId. Check if the book exist with the bookId. Send an error response with appropirate status code like [this](#error-response-structure) if the book or book review does not exist
+- Delete the related reivew.
+- Update the books document - decrease review count by one*/
+
+
+const deleteReviewById = async function (req, res) {
+    try {
+        const bookId = req.params.bookId
+        const reviewId = req.params.reviewId
+
+        if (!(/^[0-9a-fA-F]{24}$/.test(bookId))) {
+            return res.status(400).send({ status: false, message: 'please provide valid bookId' })
+        }
+        const book = await bookModel.findOne({ _id: bookId, isDeleted: false })
+        if (!book) {
+            res.status(400).send({ status: false, message: "Book doesn't exist" })
+            return
+        }
+        if (!(/^[0-9a-fA-F]{24}$/.test(reviewId))) {
+            res.status(400).send({ status: false, message: 'please provide valid reviewId' })
+            return
+        }
+        const review = await reviewModel.findOne({ _id: reviewId, bookId: bookId, isDeleted: false })
+        if (!review) {
+            res.status(400).send({ status: false, message: "review doesn't exist for given bookId" })
+            return
+        }
+
+    
+        const deletedReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId }, { isDeleted: true }, { new: true })
+
+        
+        const decreaseCount = await bookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } }) 
+              res.status(200).send({ status: true, message: "review deleted successfully" })
+    }
+    catch (error) {
+        console.log(error.message)
+        res.status(500).send({ status: false, message: error.message })
+    }
+}
+
+
+
+
 module.exports.createReview = createReview
+module.exports.updateReviews = updateReviews
+module.exports.deleteReviewById = deleteReviewById
+
 

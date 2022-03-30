@@ -143,7 +143,7 @@ const getBooks=async function(req,res){
 - Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
 - If the book has no reviews then the response body should include book detail as shown [here](#book-details-response-no-reviews) and an empty array for reviewsData.
 - If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure)*/ 
-const getBookById = async function (req, res) {
+ const getBookById = async function (req, res) {
     try {
         const bookId = req.params.bookId
        
@@ -166,6 +166,7 @@ const getBookById = async function (req, res) {
         return res.status(500).send({status: false, error: error.message})
     }
 }
+
 
 //4
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -372,18 +373,13 @@ module.exports.deleteBookById = deleteBookById
 
 
 
-//   const getBooks= async (req, res) => {
-//     try {
-//         const data = req.query
-        
-//         if (Object.keys(data) == 0) return res.status(400).send({ status: false, msg: "No input provided" })
 
-//         const books = await bookModel.find(data,{isDeleted:false}).select({ "_id": 1, "title": 1, "excerpt": 1, "userId": 1 ,"category":1,"subcategory":1,"releasedAt":1,"reviews":1 }).sort({"title":1})
-        
-//         if (books.length == 0) return res.status(404).send({ status: false, msg: "No books Available." })
-//         res.status(200).send({ status: true, count: books.length, data: books });
-//     }
-//     catch (error) {
-//         res.status(500).send({ status: false, msg: error.message });
-//     }
-// }
+// const sentnce = data.fullName
+//             let FirstCaptal = convertFirstLetterToUpperCase(sentnce)
+//             function convertFirstLetterToUpperCase(sentnce) {
+//                 var splitStr = sentnce.toLowerCase().split(' ');
+//                 for (var i = 0; i < splitStr.length; i++) {
+//                     splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+//                 }
+//                 return splitStr.join(' ');
+//             }
