@@ -165,8 +165,6 @@ const userLogin = async function (req, res) {
             group15: checkEmail._id.toString(),
             iat: Math.floor(Date.now()/1000),
             exp: Math.floor(Date.now()/1000) + 10 * 60 * 60
-
-    
         },
             'group15Project'
         );

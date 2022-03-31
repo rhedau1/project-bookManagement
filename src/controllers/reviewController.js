@@ -82,78 +82,37 @@ const createReview = async function (req, res) {
 - Get review details like review, rating, reviewer's name in request body.
 - Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like [this](#book-details-response)
 */
+
 const updateReviews = async function (req, res) {
-    try {
-        const bookId = req.params.bookId
-        const reviewId = req.params.reviewId
-        const updatingBody = req.body
+    let getBookId = req.params.bookId;
+    let getReviewId = req.params.reviewId
+    let data = req.body;
 
-       
-        if(Object.keys(updatingBody) == 0) {
-            res.status(400).send({status: false, message: 'please provide data for updation'})
-            return
+    if (!data) {
+         return res.status(400).send({ status: false, message: "enter data for update" }) 
         }
 
-        if (!(/^[0-9a-fA-F]{24}$/.test(reviewId))) {
-            res.status(400).send({ status: false, message: 'please provide valid reviewId' })
-            return
-        }
+    let checkBookId = await bookModel.findOne({ _id: getBookId }, { isDeleted: false })
 
-        const book = await bookModel.findOne({ _id: bookId, isDeleted: false })
+    if (!checkBookId) { 
+        return res.status(400).send({ status: false, message: "no book exist with this id" })
+     }
 
-        if(!book) {
-            return res.status(404).send({status: false, message: 'book doesnot exist'})
-        }
+    let checkReviewId = await reviewModel.findOne({ _id: getReviewId }, { isDeleted: false })
 
-        if (!(/^[0-9a-fA-F]{24}$/.test(reviewId))) {
-            res.status(400).send({ status: false, message: 'please provide valid reviewId' })
-            return
-        }
-        
-        const review = await reviewModel.findOne({ _id: reviewId, bookId: bookId, isDeleted: false })
-        if (!review) {
-            res.status(400).send({ status: false, message: "This review doesn't exist for given bookId" })
-            return
-        }
-
-        if (updatingBody.reviewedBy != null) {
-            if (!isValid(updatingBody.reviewedBy)) {
-                res.status(400).send({ status: false, message: 'please provide reviewedBy' })
-                return
-            }
-        }
-       
-        if (updatingBody.rating != null) {
-            if (!isValid(updatingBody.rating)) {
-                res.status(400).send({ status: false, message: 'please provide rating' })
-                return
-            }
-        }
-        
-        if (updatingBody.review != null) {
-            if (!isValid(updatingBody.review)) {
-                res.status(400).send({ status: false, message: 'please provide review' })
-                return
-            }
-        }
-
-        if (updatingBody.rating < 1 || updatingBody.rating > 5 ) {
-            res.status(400).send({ status: false, message: 'please provide ratings ( 1 - 5 )' })
-            return
-        }
-
-        const updatedReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId },{ updatingBody },{ new: true })
-
-        const allReviews = await reviewModel.find({ bookId: bookId ,isDeleted:false})
-
-        res.status(200).send({status: true,message: "review updateded",data: { ...book.toObject(), viewer: allReviews } })
+    if (!checkReviewId) { 
+        return res.status(400).send({ status: false, message: "no review exist with this id" }) 
+    }
+    if (data.rating < 1 || data.rating > 5 ) {
+        res.status(400).send({ status: false, message: 'please provide ratings ( 1 - 5 )' })
         return
+    }
 
-    }
-    catch (error) {
-        console.log(error.message)
-        res.status(500).send({ status: false, message: error.message })
-    }
+
+    let updateReview = await reviewModel.findOneAndUpdate({ _id: getReviewId, bookId: getBookId },
+        { $set: { review: data.review, rating: data.rating, reviewedBy: data.reviewedBy,reviewedAt:Date.now() } }, { new: true })
+
+    return res.status(200).send({ status: true, message: "review updated successfully", data: updateReview })
 }
 
 /*### DELETE /books/:bookId/review/:reviewId
