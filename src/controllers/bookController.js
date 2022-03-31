@@ -181,7 +181,7 @@ const getBooks=async function(req,res){
 - Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
 - Also make sure in the response you return the updated book document.*/
 
-const updateBook = async function (req, res) {
+const updateBook = async  (req, res) => {
   try {
     const bookId = req.params.bookId
 
@@ -281,7 +281,7 @@ const deleteBookById = async function (req, res) {
         res.status(400).send({ status: false, message: "Book is already deleted" })
         return
       }
-  
+  //finds the first document that matches a given filter, applies an update, and returns the document.
       const deletedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: new Date() } })
   
       res.status(200).send({ status: true, message: "Success" ,message: "Book deleted successfully" })

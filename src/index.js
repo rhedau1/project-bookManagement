@@ -5,8 +5,9 @@ const { default: mongoose } = require('mongoose');
 const app = express();
 
 app.use(bodyParser.json());
+//app.use(bodyParser.json()) basically tells the system that you want json to be used.
 app.use(bodyParser.urlencoded({ extended: true }));
-
+//Express body-parser is an npm library used to process data sent through an HTTP request body
 
 mongoose.connect("mongodb+srv://thorium-cohort:qwertyuiop@cluster0.xyklh.mongodb.net/group15Database?authSource=admin&replicaSet=atlas-wc30tm-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true", {
     useNewUrlParser: true

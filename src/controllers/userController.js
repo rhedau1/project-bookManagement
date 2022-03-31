@@ -10,7 +10,7 @@ const isValid =  function(value) {
   const isValidTitle = function(title) {
     return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
 }
-
+//The indexOf() method returns the first index at which a given element can be found in the array, or -1 if it is not present.
 /*## User APIs 
 ### POST /register
 - Create a user - atleast 5 users
@@ -163,11 +163,15 @@ const userLogin = async function (req, res) {
 
         const token = jwt.sign({
             group15: checkEmail._id.toString(),
-            iat: Math.floor(Date.now()/1000),
+            iat: Math.floor(Date.now()/1000),           
             exp: Math.floor(Date.now()/1000) + 10 * 60 * 60
         },
             'group15Project'
         );
+
+//         let payload = { _id: user._id };
+//   let token = jwt.sign(payload, "secret_key", { expiresIn: "30m" })
+
             
 
          return res.status(200).send({status: true, message: 'User login successfull', data: {token}});
