@@ -56,16 +56,18 @@ const createReview = async function (req, res) {
             return res.status(400).send({ status: false, message: 'please provide valid date in format (YYYY-MM-DD)' })
         }
 
+        if (reviewBody.rating < 1 || reviewBody.rating > 5 ) {
+            res.status(400).send({ status: false, message: 'please provide ratings ( 1 - 5 )' })
+            return
+        }
+
         const reviewData = { bookId, rating, review, reviewedBy, reviewedAt: Date.now() }
-        //The static Date.now() method returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
 
         const addReview = await reviewModel.create(reviewData)
-// aree each time review add ho jayega one,mtlb count increase ho jayega review ka
 
         book.reviews = book.reviews + 1
         await book.save()
 
-//Returns an object with each property name and value corresponding to the entries in this collection
         const data = book.toObject()
         data.reviewsData = addReview
 
@@ -101,16 +103,16 @@ const updateReviews = async function (req, res) {
         return res.status(400).send({ status: false, message: "no book exist with this id" })
      }
 
-    let checkReviewId = await reviewModel.findOne({ _id: getReviewId }, { isDeleted: false })
+    let checkReviewId = await reviewModel.findOne({ _id: getReviewId , isDeleted: false })
 
     if (!checkReviewId) { 
         return res.status(400).send({ status: false, message: "no review exist with this id" }) 
     }
-    if (data.rating >= 1 || data.rating <=5 ) {
+    if (data.rating < 1 || data.rating > 5 ) {
         res.status(400).send({ status: false, message: 'please provide ratings ( 1 - 5 )' })
         return
     }
- 
+
 
     let updateReview = await reviewModel.findOneAndUpdate({ _id: getReviewId, bookId: getBookId },
         { $set: { review: data.review, rating: data.rating, reviewedBy: data.reviewedBy,reviewedAt:Date.now() } }, { new: true })
@@ -166,5 +168,4 @@ const deleteReviewById = async function (req, res) {
 module.exports.createReview = createReview
 module.exports.updateReviews = updateReviews
 module.exports.deleteReviewById = deleteReviewById
-
 

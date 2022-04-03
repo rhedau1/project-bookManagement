@@ -78,19 +78,19 @@ const createBook = async function (req, res) {
             return res.status(400).send({status: false, message: 'subcategory is required'})
         }
         //----------------------------------------------------------------------------------------reviewsValidation
-        if(!isValid(reviews)) {
-            return res.status(400).send({status: false, message: 'reviews is required'})
-        }
+        // if(!isValid(reviews)) {
+        //     return res.status(400).send({status: false, message: 'reviews is required'})
+        // }
         //----------------------------------------------------------------------------------------releasedAtValidation
         if(!isValid(releasedAt)) {
             return res.status(400).send({status: false, message: 'releasedAt is required'})
         }
 
-        if(!/^\d{4}-\d{2}-\d{2}$/.test(bookBody.releasedAt)) {
+        if(!(/^((?:19|20)[0-9][0-9])-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])/.test(bookBody.releasedAt))) {
             return res.status(400).send({status: false, message: 'Invalid date format'})
         }
           
-        const reqData = { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt:moment(releasedAt) }
+        const reqData = { title, excerpt, userId, ISBN, category, subcategory, releasedAt:moment(releasedAt) }
 
 
 
@@ -181,7 +181,7 @@ const getBooks=async function(req,res){
 - Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
 - Also make sure in the response you return the updated book document.*/
 
-const updateBook = async  (req, res) => {
+const updateBook = async function (req, res) {
   try {
     const bookId = req.params.bookId
 
@@ -281,7 +281,7 @@ const deleteBookById = async function (req, res) {
         res.status(400).send({ status: false, message: "Book is already deleted" })
         return
       }
-  //finds the first document that matches a given filter, applies an update, and returns the document.
+  
       const deletedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: new Date() } })
   
       res.status(200).send({ status: true, message: "Success" ,message: "Book deleted successfully" })
@@ -303,83 +303,3 @@ module.exports.deleteBookById = deleteBookById
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const sentnce = data.fullName
-//             let FirstCaptal = convertFirstLetterToUpperCase(sentnce)
-//             function convertFirstLetterToUpperCase(sentnce) {
-//                 var splitStr = sentnce.toLowerCase().split(' ');
-//                 for (var i = 0; i < splitStr.length; i++) {
-//                     splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-//                 }
-//                 return splitStr.join(' ');
-//             }
